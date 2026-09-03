@@ -3,34 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
     <title>Quick Calc</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <script src="script.js" defer></script>
+    <div id="calculator">
+        <input id="display" readonly>
+        <div id="keys">
+            <button data-value="+">+</button>
+            <button data-value="7">7</button>
+            <button data-value="8">8</button>
+            <button data-value="9">9</button>
 
-    <div id="topBar">
-        <div id="topBarNumbers">0</div> 
+            <button data-value="-">-</button>
+            <button data-value="4">4</button>
+            <button data-value="5">5</button>
+            <button data-value="6">6</button>
+
+            <button data-value="*">*</button>
+            <button data-value="1">1</button>
+            <button data-value="2">2</button>
+            <button data-value="3">3</button>
+
+            <button data-value="/">/</button>
+            <button data-value="0">0</button>
+            <button data-value=".">.</button>
+
+            <button data-value="equals" id="equals">=</button>
+            <button data-value="clear" id="clear" class="operator-btn">C</button>
+        </div>
     </div>
-<div id="buttonList">
-    <button class="numberButton">1</button>
-    <button class="numberButton">2</button>
-    <button class="numberButton">3</button>
-    <button class="operatorButton">+</button>
 
-    <button class="numberButton">4</button>
-    <button class="numberButton">5</button>
-    <button class="numberButton">6</button>
-    <button class="operatorButton">-</button>
-
-    <button class="numberButton">7</button>
-    <button class="numberButton">8</button>
-    <button class="numberButton">9</button>
-    <button class="equalsButton">=</button>
-
-    <button class="numberButton">0</button>
-    <button class="operatorButton">x</button>
-    <button class="operatorButton">÷</button>
-</div>
+    <script src="script.js"></script>
 </body>
 </html>

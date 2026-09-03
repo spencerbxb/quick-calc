@@ -1,73 +1,112 @@
-const buttons = document.querySelectorAll("#buttonList button");
+// CALCULATOR PROGRAM
+
+const display = document.getElementById("display");
+const buttons = document.querySelectorAll("#keys button");
 
 buttons.forEach(button => {
-    button.addEventListener("click", handleButtonClick);
+    button.addEventListener("click", () => {
+        const value = button.dataset.value;
+        
+        // normal buttons
+        if (value !== "equals" && value !== "clear") appendToDisplay(value);
+        
+        // clearDisplay button
+        if (value === "clear") clearDisplay();
+
+        // equals button
+        if (value === "equals") calculate();
+    });
 });
 
-function handleButtonClick(event) {
-    const button = event.target;
 
-    if (button.classList.contains("numberButton")) {
-        handleNumber(button.textContent);
-    }
-    else if (button.classList.contains("operatorButton")) {
-        handleOperator(button.textContent);
-    }
-    else if (button.classList.contains("equalsButton")) {
-        calculate();
-    }
+function appendToDisplay(input) {
+    if (display.value === "Error") display.value = "";
+    display.value += input;
 }
 
-function updateDisplay() {
-    document.querySelector("#topBarNumbers").textContent = currentNumber || "0";
+function clearDisplay(){
+    display.value = "";
 }
 
-function handleOperator(newOperator) {
-    if (currentNumber === "") {
-        return;
-    }
-
-    storedNumber = Number(currentNumber);
-    operator = newOperator;
-    currentNumber = "";
-
-    updateDisplay();
-}
-
-function handleNumber(number) {
-    currentNumber += number;
-    updateDisplay();
+function tokenize(expression) {
+    return expression.match(/\d+(\.\d+)?|[+\-*/]/g);
 }
 
 function calculate() {
-    if (storedNumber === null || operator === null || currentNumber === "") {
+    const expression = display.value;
+    const tokens = tokenize(expression);
+
+    if (!tokens) {
+        display.value = "Error";
         return;
     }
 
-    const secondNumber = Number(currentNumber);
-    let result;
+    // Expression cannot end with an operator
+    const lastToken = tokens[tokens.length - 1];
 
-    switch (operator) {
-        case "+":
-            result = storedNumber + secondNumber;
-            break;
-
-        case "-":
-            result = storedNumber - secondNumber;
-            break;
-
-        case "x":
-            result = storedNumber * secondNumber;
-            break;
-
-        case "÷":
-            result = storedNumber / secondNumber;
-            break;
+    if (["+", "-", "*", "/"].includes(lastToken)) {
+        display.value = "Error";
+        return;
     }
 
-    currentNumber = String(result);
-    storedNumber = null;
-    operator = null;
+    // Expression cannot start with an operator
+    const firstToken = tokens[0];
 
-    updateDisplay();
+    if (["+", "-", "*", "/"].includes(firstToken)) {
+        display.value = "Error";
+        return;
+    }
+
+    // Converts numbers to Number
+    for (let i = 0; i < tokens.length; i++) {
+        if (!isNaN(tokens[i])) {
+            tokens[i] = Number(tokens[i]);
+        }
+    }
+
+    // First pass: * and /
+    for (let i = 1; i < tokens.length - 1; i += 2) {
+
+        if (tokens[i] !== "*" && tokens[i] !== "/") {
+            continue;
+        }
+
+        const left = tokens[i - 1];
+        const operator = tokens[i];
+        const right = tokens[i + 1];
+
+        let result;
+
+        if (operator === "*") {
+            result = left * right;
+        } else {
+            result = left / right;
+        }
+
+        tokens.splice(i - 1, 3, result);
+
+        i -= 2;
+    }
+
+    // Second pass: + and -
+    let result = tokens[0];
+
+    for (let i = 1; i < tokens.length; i += 2) {
+
+        const operator = tokens[i];
+        const number = tokens[i + 1];
+
+        if (operator === "+") {
+            result += number;
+        } else if (operator === "-") {
+            result -= number;
+        }
+    }
+
+    if (!Number.isFinite(result)) {
+        display.value = "Error";
+        return;
+    }
+
+    display.value = result;
 }
